@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>主遊戲 & 小遊戲</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Microsoft JhengHei', 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2c3e50 100%);
+            color: white;
+            overflow: hidden;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* 主選單樣式 */
+        .main-menu {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            gap: 40px;
+            z-index: 1000;
+        }
+
+        .game-title {
+            font-size: 4rem;
+            font-weight: bold;
+            background: linear-gradient(45deg, #f1c40f, #e67e22, #3498db);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 30px rgba(241, 196, 15, 0.5);
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from { filter: drop-shadow(0 0 10px rgba(241, 196, 15, 0.5)); }
+            to { filter: drop-shadow(0 0 20px rgba(241, 196, 15, 0.8)); }
+        }
+
+        .game-buttons {
+            display: flex;
+            gap: 30px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .game-btn {
+            padding: 20px 40px;
+            font-size: 1.8rem;
+            font-weight: bold;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            position: relative;
+            overflow: hidden;
+            min-width: 200px;
+            text-align: center;
+        }
+
+        .main-game-btn {
+            background: linear-gradient(45deg, #e74c3c, #c0392b);
+            color: white;
+        }
+
+        .small-game-btn {
+            background: linear-gradient(45deg, #3498db, #2980b9);
+            color: white;
+        }
+
+        .game-btn:hover {
+            transform: translateY(-10px) scale(1.05);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+        }
+
+        .game-btn:active {
+            transform: translateY(-5px) scale(1.02);
+        }
+
+        /* 遊戲容器 */
+        .game-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: none;
+            z-index: 999;
+        }
+
+        .game-container.active {
+            display: block;
+        }
+
+        /* 返回按鈕 */
+        .back-btn {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            z-index: 1001;
+            padding: 12px 24px;
+            background: rgba(0,0,0,0.7);
+            color: white;
+            border: none;
+            border-radius: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .back-btn:hover {
+            background: rgba(0,0,0,0.9);
+            transform: scale(1.05);
+        }
+
+        /* 隱藏類 */
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+<body>
+    <!-- 主選單 -->
+    <div id="mainMenu" class="main-menu">
+        <h1 class="game-title">🎮 遊戲中心 🎮</h1>
+        <div class="game-buttons">
+            <button id="mainGameBtn" class="game-btn main-game-btn">
+                🗡️ 主遊戲 (roguelike)
+            </button>
+            <button id="smallGameBtn" class="game-btn small-game-btn">
+                🕹️ 小遊戲合集
+            </button>
+        </div>
+    </div>
+
+    <!-- 主遊戲容器 (Main.html內容) -->
+    <div id="mainGameContainer" class="game-container">
+        <button class="back-btn" onclick="showMainMenu()">← 返回主選單</button>
+        <!-- Main.html 的完整內容將嵌入這裡 -->
+        <iframe id="mainGameFrame" src="Main.html" style="width:100%; height:100%; border:none;"></iframe>
+    </div>
+
+    <!-- 小遊戲容器 (SMALL.html內容) -->
+    <div id="smallGameContainer" class="game-container">
+        <button class="back-btn" onclick="showMainMenu()">← 返回主選單</button>
+        <!-- SMALL.html 的完整內容將嵌入這裡 -->
+        <iframe id="smallGameFrame" src="SMALL.html" style="width:100%; height:100%; border:none;"></iframe>
+    </div>
+
+    <script>
+        // 遊戲控制函數
+        function showMainMenu() {
+            document.getElementById('mainMenu').style.display = 'flex';
+            document.getElementById('mainGameContainer').classList.remove('active');
+            document.getElementById('smallGameContainer').classList.remove('active');
+            
+            // 重置iframe
+            const mainFrame = document.getElementById('mainGameFrame');
+            const smallFrame = document.getElementById('smallGameFrame');
+            mainFrame.src = mainFrame.src;
+            smallFrame.src = smallFrame.src;
+        }
+
+        function showMainGame() {
+            document.getElementById('mainMenu').style.display = 'none';
+            document.getElementById('mainGameContainer').classList.add('active');
+            document.getElementById('smallGameContainer').classList.remove('active');
+        }
+
+        function showSmallGame() {
+            document.getElementById('mainMenu').style.display = 'none';
+            document.getElementById('mainGameContainer').classList.remove('active');
+            document.getElementById('smallGameContainer').classList.add('active');
+        }
+
+        // 按鈕事件綁定
+        document.getElementById('mainGameBtn').addEventListener('click', showMainGame);
+        document.getElementById('smallGameBtn').addEventListener('click', showSmallGame);
+
+        // 鍵盤快捷鍵
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                showMainMenu();
+            }
+        });
+
+        // 初始化
+        showMainMenu();
+    </script>
+</body>
+</html>
